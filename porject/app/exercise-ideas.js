@@ -68,6 +68,7 @@ const ExerciseIdeas = () => {
                 {exercises.map((exercise) => (
                     <li key={exercise.id}>
                         {exercise.category == selectedCategoryId ? <p>{exercise.name}</p> : <p>Not workign</p>}
+                        
                     </li>
                 ))}
             </ul>
