@@ -2,102 +2,52 @@
 import { useState, useEffect } from "react";
 
 const ExerciseIdeas = () => {
-    const [categories, setCategories] = useState([]);
     const [exercises, setExercises] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState([]);
 
-    useEffect(() => {
-        const loadCategories = async () => {
-            try {
-                const categoryData = await fetchCategories();
-                console.log("Fetched Categories:", categoryData); // Log the fetched data
-                setCategories(categoryData);
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
-        loadCategories();
-    }, []); // Load category data once on component mount
 
     useEffect(() => {
         const loadExercises = async () => {
-            try {
-                if (selectedCategoryId) {
-                    const exerciseData = await fetchExercises(selectedCategoryId);
-                    console.log("Fetched Exercises:", exerciseData); // Log the fetched data
-                    setExercises(exerciseData);
-                }
-            } catch (error) {
-                console.error("Error fetching exercises:", error);
-            }
+            const exerciseIdeas = await fetchExercises();
+            setExercises(exerciseIdeas);
         };
-        loadExercises();
-    }, [selectedCategoryId]); // Load exercise data when selectedCategoryId changes
+    }, [])//should be loading just on mount might have to change to what is searched
 
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
 
-    const handleCategorySelect = (categoryId) => {
-        setSelectedCategoryId(categoryId);
-    };
-
-    const filteredCategories = categories.filter((category) =>
-        category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     return (
         <div>
-            <h2>Exercise Category Test to see what the data looks like</h2>
-            <input 
-                type="text" 
-                value={searchTerm}
-                onChange={handleSearchChange}
-                placeholder="Search..."
-                className="text-black"
-            />
-            <ul>
-                {filteredCategories.map((category) => (
-                    <li key={category.id} onClick={() => handleCategorySelect(category.id)}>
-                        <p>{category.name}</p>
-                    </li>
-                ))}
-            </ul>
-            <ul>
-                {exercises.map((exercise) => (
-                    <li key={exercise.id}>
-                        {exercise.category == selectedCategoryId ? <p>{exercise.name}</p> : <p>Not workign</p>}
-                        
-                    </li>
-                ))}
-            </ul>
+            <label>Choose a muscle group to begin search</label>
+            <div></div>
+            <select id="muscles" name="muscles" className="text-black">
+                    <option value="abdominals">Abdominals</option>
+                    <option value="abductors">Abductors</option>
+                    <option value="adductors">Adductors</option>
+                    <option value="biceps">Biceps</option>
+                    <option value="calves">Calves</option>
+                    <option value="chest">Chest</option>
+                    <option value="forearms">Forearms</option>
+                    <option value="glutes">Glutes</option>
+                    <option value="hamstrings">Hamstrings</option>
+                    <option value="lats">Lats</option>
+                    <option value="lower_back">Lower_back</option>
+                    <option value="middle_back">Middle_back</option>
+                    <option value="neck">Neck</option>
+                    <option value="quadriceps">Quadriceps</option>
+                    <option value="traps">Traps</option>
+                    <option value="triceps">Triceps</option>
+            </select>
         </div>
-    );
-};
+    )
 
-/**
- * to display what I want
- * <p>{exercise.description}</p>
- * <h3>{exercise.name}</h3>
- * 
- * */
-async function fetchCategories() {
-    const response = await fetch('https://wger.de/api/v2/exercisecategory/');
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    return data.results || []; // Access the correct field in the response
 }
-
-async function fetchExercises(categoryId) {
-    const response = await fetch(`https://wger.de/api/v2/exercise/?limit=20&offset=20`);
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
+async function fetchExercises(){
+    const response = await fetch("https://api.api-ninjas.com/v1/exercises?muscle=biceps")
+    if(!response.ok){
+        throw new Error("Network not responding :( ");
     }
     const data = await response.json();
-    return data.results || []; // Access the correct field in the response
+    return data || [];
 }
 
 export default ExerciseIdeas;
