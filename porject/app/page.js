@@ -1,13 +1,10 @@
-import Image from "next/image";
 import ExerciseIdeas from "./exercise-ideas";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
+    <main className="relative min-h-screen w-full bg-white [background:radial-gradient(125%_125%_at_50%_50%,#fff_40%,#63e_100%)]">
         <ExerciseIdeas />
-      </div>
     </main>
   );
 }
+        //<div class="absolute inset-0 -z-10 h-full w-full bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]"></div>

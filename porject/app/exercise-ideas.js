@@ -3,23 +3,30 @@ import { useState, useEffect } from "react";
 
 const ExerciseIdeas = () => {
     const [exercises, setExercises] = useState([]);
-    const [searchTerm, setSearchTerm] = useState([]);
-
+    const [searchTerm, setSearchTerm] = useState("abdominals");
 
     useEffect(() => {
         const loadExercises = async () => {
-            const exerciseIdeas = await fetchExercises();
+            const exerciseIdeas = await fetchExercises(searchTerm);
             setExercises(exerciseIdeas);
         };
-    }, [])//should be loading just on mount might have to change to what is searched
+        loadExercises();
+    }, [searchTerm]); // Fetch exercises when searchTerm changes
 
-
+    const handleMuscleChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
 
     return (
-        <div>
-            <label>Choose a muscle group to begin search</label>
-            <div></div>
-            <select id="muscles" name="muscles" className="text-black">
+        <div className="min-h-screen bg-light-blue-100">
+            <div className="fixed top-0 left-0 right-0 bg-white shadow-md p-4">
+                <label className="block text-lg font-semibold mb-2">Choose a muscle group</label>
+                <select
+                    id="muscles"
+                    name="muscles"
+                    className="block w-full p-2 border border-gray-300 rounded-md text-black"
+                    onChange={handleMuscleChange}
+                >
                     <option value="abdominals">Abdominals</option>
                     <option value="abductors">Abductors</option>
                     <option value="adductors">Adductors</option>
@@ -36,15 +43,30 @@ const ExerciseIdeas = () => {
                     <option value="quadriceps">Quadriceps</option>
                     <option value="traps">Traps</option>
                     <option value="triceps">Triceps</option>
-            </select>
+                </select>
+            </div>
+            <div className="pt-24 mx-auto max-w-3xl px-4">
+                <ul className="space-y-6">
+                    {exercises.map((exercise) => (
+                        <li key={exercise.name} className="bg-white p-6 rounded-md shadow-md">
+                            <p className="text-xl font-semibold text-indigo-400">{exercise.name}</p>
+                            <p className="text-gray-700"><strong>Type:</strong> {exercise.type}</p>
+                            <p className="text-gray-700"><strong>Difficulty:</strong> {exercise.difficulty}</p>
+                            <p className="text-gray-700"><strong>Instructions:</strong> {exercise.instructions}</p>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
-    )
+    );
+};
 
-}
-async function fetchExercises(){
-    const response = await fetch("https://api.api-ninjas.com/v1/exercises?muscle=biceps")
-    if(!response.ok){
-        throw new Error("Network not responding :( ");
+async function fetchExercises(muscle) {
+    const response = await fetch(`https://api.api-ninjas.com/v1/exercises?muscle=${muscle}`, {
+        headers: { 'X-Api-Key': 'u0YH1QPoCnaHo1Ry6cw/Ug==k5A7f9jL2viQEnNY' }
+    });
+    if (!response.ok) {
+        throw new Error("Network not responding :(");
     }
     const data = await response.json();
     return data || [];
